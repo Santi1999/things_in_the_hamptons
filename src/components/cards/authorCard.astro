@@ -1,0 +1,28 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+type Props = {
+  author: CollectionEntry<"authors">;
+};
+
+const { author } = Astro.props;
+---
+
+<li class="col-span-1 group mx-auto max-w-xs relative isolate">
+  <div class="aspect-square w-full rounded-md overflow-hidden">
+    <Image
+      class="w-full h-full object-cover filter grayscale group-hover:grayscale-0"
+      src={author.data.avatar}
+      alt={author.data.name}
+    />
+  </div>
+  <div class="flex flex-col gap-1 mt-2">
+    <h3 class="text-lg font-semibold group-hover:underline">
+      <a href={`/authors/${author.id}`}>
+        <span class="absolute inset-0 z-10 pointer-events-none"></span>
+        {author.data.name}
+      </a>
+    </h3>
+    <p class="text-sm text-primary dark:text-secondary">{author.data.job}</p>
+  </div>
+</li>
