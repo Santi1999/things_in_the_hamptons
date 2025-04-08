@@ -2,11 +2,12 @@
 isDraft: false
 isBigHeadline: true
 isSmallHeadline: false
-title: "Understanding JavaScript Closures"
-description: "An in-depth look at closures in JavaScript and their applications."
+title: "Town of East Hampton: Easter Egg Hunt"
+description: "dsafa"
 cover: "./imgs/js.avif"
-category: programming
-publishedTime: "2024-11-11T00:00:00.000Z"
+category: featured-events
+eventDate: "2025-04-12T00:00:00.000Z"
+publishedTime: "2024-04-12T12:00:00.000Z"
 authors: ["ahmed-khan", "jane-doe"]
 ---
 
@@ -18,15 +19,14 @@ A closure is the combination of a function bundled together with references to i
 
 ```js
 function outerFunction(outerVariable) {
-    return function innerFunction(innerVariable) {
-        console.log(`Outer Variable: ${outerVariable}`);
-        console.log(`Inner Variable: ${innerVariable}`);
-    };
+  return function innerFunction(innerVariable) {
+    console.log(`Outer Variable: ${outerVariable}`)
+    console.log(`Inner Variable: ${innerVariable}`)
+  }
 }
 
-const closureExample = outerFunction("I am from outerFunction");
+const closureExample = outerFunction("I am from outerFunction")
 
 // Calling the inner function with the closure
-closureExample("I am from innerFunction");
-
+closureExample("I am from innerFunction")
 ```

@@ -19,13 +19,14 @@ import { NAVIGATION_LINKS, OTHER_LINKS } from "@/lib/config";
   >
     <li><a href="/" aria-label="Homepage">Home</a></li>
     <li><a href="/articles" aria-label="Articles Page">Articles</a></li>
+    <li><a href="/events" aria-label="Events Page">Events</a></li>
 
     <li>
       <details>
         <summary>Categories</summary>
         <ul>
           {
-            NAVIGATION_LINKS.map(({ href, text, target }) => (
+             NAVIGATION_LINKS.filter(link => link.text !== "Events").map(({ href, text, target }) =>(
               <li>
                 <a href={href} target={target ?? "_self"} aria-label={text}>
                   {text}

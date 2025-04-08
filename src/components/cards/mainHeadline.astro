@@ -5,7 +5,8 @@ import { render } from "astro:content";
 import Divider from "@/components/bases/divider.astro";
 import { categoriesHandler } from "@/lib/handlers/categories";
 import { getDateDistance } from "@/lib/utils/date";
-
+import { getEventDistance } from "@/lib/utils/date";
+import HeaderSection from "@/pages/_home/headerSection.astro";
 type Props = {
   article: CollectionEntry<"articles">;
 };
@@ -16,6 +17,11 @@ const { remarkPluginFrontmatter } = await render(article);
 
 const category = categoriesHandler.oneCategory(article.data.category.id);
 ---
+<HeaderSection
+    title="Featured Events"
+    link_title="View all featured events"
+  link_url="/featured-events/"
+  />
 
 <article class="group relative isolate flex flex-col-reverse md:flex-col gap-4">
   <div class="aspect-video overflow-hidden rounded-md">
@@ -46,7 +52,7 @@ const category = categoriesHandler.oneCategory(article.data.category.id);
       <span class="text-primary dark:text-secondary">{category.data.title}</span
       >
       <Divider />
-      <span>{getDateDistance(remarkPluginFrontmatter.lastModified)}</span>
+      <span>{article.data.eventDate} {getDateDistance(remarkPluginFrontmatter.eventDate)}</span>
     </div>
   </div>
 </article>

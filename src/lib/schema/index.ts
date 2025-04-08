@@ -1,18 +1,20 @@
-import { reference, z } from "astro:content";
-import type { ImageFunction } from "astro:content";
+import { reference, z } from "astro:content"
+import type { ImageFunction } from "astro:content"
 
-export const articleSchema = (image: ImageFunction) => z.object({
-  isDraft: z.boolean().default(false),
-  isBigHeadline: z.boolean().default(false),
-  isSmallHeadline: z.boolean().default(false),
-  cover: image(),
-  covert_alt: z.string().optional(),
-  title: z.string().max(60, "Too long, max 60 characters"),
-  description: z.string().max(160, "Too long, max 160 characters"),
-  category: reference("categories"),
-  authors: z.array(reference("authors")).min(1),
-  publishedTime: z.string().datetime(),
-})
+export const articleSchema = (image: ImageFunction) =>
+  z.object({
+    isDraft: z.boolean().default(false),
+    isBigHeadline: z.boolean().default(false),
+    isSmallHeadline: z.boolean().default(false),
+    cover: image(),
+    covert_alt: z.string().optional(),
+    title: z.string().max(60, "Too long, max 60 characters"),
+    description: z.string().max(160, "Too long, max 160 characters"),
+    category: reference("categories"),
+    authors: z.array(reference("authors")).min(1),
+    publishedTime: z.string().datetime(),
+    eventDate: z.string().datetime(),
+  })
 
 export const viewSchema = z.object({
   title: z.string(),
@@ -22,23 +24,28 @@ export const viewSchema = z.object({
 
 export const categorySchema = z.object({
   title: z.string(),
-  path: z.string().regex(
-    /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-    "The string must be a slug (only lowercase letters, numbers, and hyphens)."
-  ),
+  path: z
+    .string()
+    .regex(
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+      "The string must be a slug (only lowercase letters, numbers, and hyphens)."
+    ),
 })
 
-export const authorSchema = (Image: ImageFunction) => z.object({
-  name: z.string(),
-  job: z.string(),
-  avatar: Image(),
-  bio: z.string(),
-  social: z.array(z.object({
+export const authorSchema = (Image: ImageFunction) =>
+  z.object({
     name: z.string(),
-    url: z.string(),
-    icon: z.string(),
-  })),
-})
+    job: z.string(),
+    avatar: Image(),
+    bio: z.string(),
+    social: z.array(
+      z.object({
+        name: z.string(),
+        url: z.string(),
+        icon: z.string(),
+      })
+    ),
+  })
 
 // avatar: Image().refine(
 //   (img) => {

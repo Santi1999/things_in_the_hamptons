@@ -51,10 +51,10 @@ const { article, isLast } = Astro.props;
     <div class="text-sm lg:hidden flex item-center text-base-content/70 pt-2">
       <time
         class="flex items-center gap-1"
-        datetime={String(article.data.publishedTime)}
+        datetime={String(article.data.eventDate)}
       >
         <span>
-          {getDateDistance(article.data.publishedTime)}
+          {getDateDistance(article.data.eventDate)}
         </span>
       </time>
       <Divider />

@@ -2,8 +2,9 @@
 import BaseLayout from "@/layouts/base.astro";
 import { getEntry } from "astro:content";
 import Headlines from "./_home/headlines.astro";
-import LatestNews from "./_home/latestNews.astro";
+// import LatestNews from "./_home/latestNews.astro";
 import Authors from "./_home/authors.astro";
+import UpcomingEvents from "./_home/upcomingEvents.astro";
 
 const entry = await getEntry("views", "home");
 
@@ -14,6 +15,7 @@ if (!entry) {
 
 <BaseLayout entry={entry}>
   <Headlines />
-  <LatestNews />
+  <UpcomingEvents />
+  <!-- <LatestNews /> -->
   <Authors />
 </BaseLayout>

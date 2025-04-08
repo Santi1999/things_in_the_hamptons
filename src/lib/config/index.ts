@@ -15,28 +15,36 @@ export const SITE = {
 
 export const NAVIGATION_LINKS: Link[] = [
   {
-    href: "/categories/technology",
-    text: "Technology",
+    href: "/categories/featured-events",
+    text: "Featured Events",
   },
   {
-    href: "/categories/programming",
-    text: "Programming",
+    href: "/categories/community",
+    text: "Community",
   },
   {
-    href: "/categories/lifestyle",
-    text: "Lifestyle",
+    href: "/categories/government",
+    text: "Government",
   },
   {
-    href: "/categories/productivity",
-    text: "Productivity",
+    href: "/categories/nature",
+    text: "Nature",
+  },
+  {
+    href: "/categories/library",
+    text: "Library",
+  },
+  {
+    href: "/categories/arts",
+    text: "Arts",
+  },
+  {
+    href: "/categories/music",
+    text: "Music",
   },
   {
     href: "/categories/health",
     text: "Health",
-  },
-  {
-    href: "/categories/finance",
-    text: "Finance",
   },
 ]
 
@@ -44,6 +52,10 @@ export const OTHER_LINKS: Link[] = [
   {
     href: "/about",
     text: "About us",
+  },
+  {
+    href: "/events",
+    text: "Events",
   },
   {
     href: "/authors",
@@ -80,11 +92,6 @@ export const SOCIAL_LINKS: Link[] = [
     href: "https://github.com",
     text: "GitHub",
     icon: "github",
-  },
-  {
-    href: "httpe://www.t.me",
-    text: "Telegram",
-    icon: "telegram",
   },
   {
     href: "https://twitter.com",

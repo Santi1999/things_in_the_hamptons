@@ -1,0 +1,130 @@
+---
+import BaseLayout from "@/layouts/base.astro";
+import { getEvents, getEventBySlug, type Event } from "@/lib/supabase";
+import { getEntry } from "astro:content";
+import { formatDate } from "@/lib/utils/date";
+import Calendar04 from "@/assets/svgs/calendar-04.astro";
+import Share from "@/components/elements/share.astro";
+
+export async function getStaticPaths() {
+  const events = await getEvents();
+  
+  return events.map(event => ({
+    params: { slug: event.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const event = await getEventBySlug(slug as string);
+
+if (!event) {
+  return Astro.redirect("/404");
+}
+
+// Create a temporary entry object for the BaseLayout
+const entry = {
+  collection: "views",
+  data: {
+    title: event.title,
+    url: event.url,
+    description: event.description,
+    blocks: [],
+    type: "website"
+  },
+  id: "event-detail",
+  body: "",
+  slug: slug as string,
+  render: async () => ({ Content: () => null, headings: [], remarkPluginFrontmatter: {} }),
+};
+
+// Format dates
+const startDate = formatDate(event.start_time, "long");
+const endDate = event.end_date ? formatDate(event.end_date, "long") : null;
+
+// Prepare image
+const imageUrl = event.image_url || "/placeholder-event.jpg";
+---
+
+<BaseLayout entry={entry}>
+  <div class="container max-w-5xl py-8">
+    <article class="flex flex-col gap-6">
+      <!-- Event Header -->
+      <div class="flex flex-col gap-4">
+        <h1 class="text-3xl md:text-4xl font-bold" ><a href={event.url}>{event.title}</a></h1>
+        
+        <div class="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+          <div class="flex items-center gap-2 text-base-content/80">
+            <Calendar04 size="18" />
+            <time datetime={event.start_time}>{startDate}</time>
+            {endDate && (
+              <>
+                <span>-</span>
+                <time datetime={event.end_date}>{endDate}</time>
+              </>
+            )}
+          </div>
+            <div class="flex gap-2">
+              
+
+              {event.location && (
+              <div class="badge badge-lg badge-outline badge-secondary">
+                {event.location}
+              </div>
+              )}
+            {event.town && (
+              <div class="badge badge-lg badge-outline badge-secondary">
+                {event.town}
+              </div>
+              )}
+              {event.category && (
+              <div class="badge badge-lg badge-outline badge-secondary">
+                {event.category}
+              </div>
+              )}
+
+              {event.url && (
+              <div class="badge badge-lg badge-outline badge-primary">
+                <a href={event.url} target="_blank" rel="noopener noreferrer">
+                Go To Event
+                </a>
+              </div>
+              )}
+            </div>
+        </div>
+      </div>
+      
+      <!-- Event Image -->
+      <div class="w-full overflow-hidden rounded-lg aspect-video">
+        <img 
+          src={imageUrl}
+          alt={event.title}
+          class="w-full h-full object-cover"
+        />
+      </div>
+      
+      <!-- Event Description -->
+      <div class="prose max-w-none">
+        <p>{event.description}</p>
+      </div>
+      
+      <!-- Event Links and Share -->
+      <div class="flex flex-col md:flex-row md:justify-between gap-4 pt-4 border-t border-base-300">
+        {event.event_url && (
+          <a 
+            href={event.event_url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="btn btn-primary"
+          >
+            Visit Event Website
+          </a>
+        )}
+        
+        <div>
+          <h3 class="text-sm mb-2">Share This Event:</h3>
+          <Share text={`Check out ${event.title} in the Hamptons!`} />
+        </div>
+      </div>
+    </article>
+  </div>
+</BaseLayout>
