@@ -1,71 +1,52 @@
 import {
-  formatDistanceToNowStrict,
   parseISO,
   format,
+  formatDistanceToNowStrict,
   isToday,
   isTomorrow,
   isYesterday,
 } from "date-fns"
 
+import { utcToZonedTime } from "./utcToZonedTime" // our own function
+
+const timeZone = "America/New_York"
+
+export const formatDate = (
+  dateString: string,
+  formatStyle = "long"
+): string => {
+  const date = parseISO(dateString)
+  const estDate = utcToZonedTime(date, timeZone)
+
+  if (formatStyle === "short") {
+    // Example: "Apr 10, 2025 8:00 PM EDT" just like txr we can switch it est during january or something
+    return `${format(estDate, "MMM dd, yyyy h:mm a")} EST`
+  }
+
+  return `${format(estDate, "EEEE, MMMM d, yyyy 'at' h:mm a")} EST`
+}
+
+export const formatTimeDifference = (dateString: string): string => {
+  const date = parseISO(dateString)
+  const estDate = utcToZonedTime(date, timeZone)
+  return formatDistanceToNowStrict(estDate, { addSuffix: true })
+}
+
 export const getEventDistance = (
   date: string,
-  options?: {
-    style?: "strict" | "friendly"
-    addSuffix?: boolean
-  }
-) => {
+  options?: { style?: "strict" | "friendly"; addSuffix?: boolean }
+): string => {
   const parsedDate = parseISO(date)
   const style = options?.style || "friendly"
   const addSuffix = options?.addSuffix !== undefined ? options.addSuffix : true
 
-  // For friendly style, check for special cases
   if (style === "friendly") {
     if (isToday(parsedDate)) return "today"
     if (isTomorrow(parsedDate)) return "tomorrow"
     if (isYesterday(parsedDate)) return "yesterday"
   }
-
-  // Otherwise use the strict formatting
   return formatDistanceToNowStrict(parsedDate, { addSuffix })
 }
 
-export const getDateDistance = (date: string) =>
-  formatDistanceToNowStrict(parseISO(date), {
-    addSuffix: true,
-  })
-
-export const formatDate = (
-  date: string,
-  formatDate: "long" | "short" = "long"
-) => {
-  console.log(date)
-  const parseDate = parseISO(date)
-  if (formatDate === "short") {
-    return format(parseDate, "MMMM dd, yyyy zz")
-  }
-
-  return format(parseDate, "EEEE, MMMM d, yyyy h:mm a zz")
-}
-
-// import { parseISO, format } from "date-fns"
-// import { toZonedTime } from "date-fns-tz"
-
-// // Convert date to EST time zone
-// export const toESTTime = (date: string) => {
-//   const parsedDate = parseISO(date)
-//   return toZonedTime(parsedDate, "America/New_York")
-// }
-
-// // Format date in EST with different format options
-// export const formatDate = (
-//   date: string,
-//   formatStyle: "long" | "short" = "long"
-// ) => {
-//   const estDate = toESTTime(date)
-
-//   if (formatStyle === "short") {
-//     return format(estDate, "MMMM dd, yyyy")
-//   }
-
-//   return format(estDate, "EEEE, MMMM d, yyyy h:mm a 'EST'")
-// }
+export const getDateDistance = (date: string): string =>
+  formatDistanceToNowStrict(parseISO(date), { addSuffix: true })
