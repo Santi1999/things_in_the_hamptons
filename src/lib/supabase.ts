@@ -104,7 +104,7 @@ export async function getEvents() {
     .from("events")
     .select("*")
     .order("start_time", { ascending: true })
-    .limit(50)
+    .limit(100)
 
   if (error) {
     console.error("Error fetching events:", error)
