@@ -1,37 +1,11 @@
 import { createClient } from "@supabase/supabase-js"
+import { decode } from "html-entities"
 
 // Use environment variables for your Supabase URL and anon key
 // Add these to your .env file
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
 
-// Helper function to convert PostgreSQL dates to ISO format
-function formatEventDates<
-  T extends { start_time: string; end_date: string | null; created_at: string },
->(event: T): T {
-  return {
-    ...event,
-    start_time: new Date(event.start_time).toISOString(),
-    end_date: event.end_date ? new Date(event.end_date).toISOString() : null,
-    created_at: new Date(event.created_at).toISOString(),
-  } as T
-}
-
-// const toEST = (date: string) => {
-//     return new Date(date).toLocaleString("en-US", {
-//       timeZone: "America/New_York",
-//       dateStyle: "full",
-//       timeStyle: "long",
-//     })
-//   }
-
-//   return {
-//     ...event,
-//     start_time: toEST(event.start_time),
-//     end_date: event.end_date ? toEST(event.end_date) : null,
-//     created_at: toEST(event.created_at),
-//   } as T
-// }
 // Create a single supabase client for the entire app
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
@@ -49,19 +23,94 @@ export type Event = {
   created_at: string
 }
 
+// Define a generic type for your data
+export type PaginatedResponse<T> = {
+  data: T[]
+  count: number
+  error: Error | null
+}
+
+// Define pagination parameters
+export type PaginationParams = {
+  page: number
+  pageSize: number
+}
+
+// Helper function to format event dates and decode HTML entities
+function formatEventDates<
+  T extends {
+    start_time: string
+    end_date: string | null
+    created_at: string
+    title: string
+    description: string
+  },
+>(event: T): T {
+  return {
+    ...event,
+    start_time: new Date(event.start_time).toISOString(),
+    end_date: event.end_date ? new Date(event.end_date).toISOString() : null,
+    created_at: new Date(event.created_at).toISOString(),
+    title: decode(event.title),
+    description: decode(event.description),
+  } as T
+}
+
+/**
+ * Function to fetch paginated data from any Supabase table
+ *
+ * @param tableName - Name of the table to query
+ * @param paginationParams - Page number and size
+ * @param queryModifier - Optional function to modify the query (add filters, etc.)
+ * @returns Promise with paginated data and total count
+ */
+export async function getPaginatedData<T>(
+  tableName: string,
+  { page, pageSize }: PaginationParams,
+  queryModifier?: (query: any) => any
+): Promise<PaginatedResponse<T>> {
+  const from = (page - 1) * pageSize
+  const to = from + pageSize - 1
+
+  try {
+    let query = supabase.from(tableName).select("*", { count: "exact" })
+
+    if (queryModifier) {
+      query = queryModifier(query)
+    }
+
+    query = query.range(from, to)
+
+    const { data, error, count } = await query
+
+    return {
+      data: data as T[],
+      count: count || 0,
+      error,
+    }
+  } catch (error) {
+    console.error("Error fetching paginated data:", error)
+    return {
+      data: [],
+      count: 0,
+      error: error as Error,
+    }
+  }
+}
+
 // Function to fetch events sorted by start_time
 export async function getEvents() {
   const { data, error } = await supabase
     .from("events")
     .select("*")
     .order("start_time", { ascending: true })
+    .limit(50)
 
   if (error) {
     console.error("Error fetching events:", error)
     return []
   }
 
-  // Use helper function to format dates
   return (data || []).map(formatEventDates) as Event[]
 }
 
@@ -79,7 +128,6 @@ export async function getEventBySlug(slug: string) {
   }
 
   if (data) {
-    // Use helper function to format dates
     return formatEventDates(data) as Event
   }
 
@@ -102,7 +150,6 @@ export async function getUpcomingEvents(limit = 6) {
     return []
   }
 
-  // Use helper function to format dates
   return (data || []).map(formatEventDates) as Event[]
 }
 
@@ -122,6 +169,5 @@ export async function getPastEvents(limit = 6) {
     return []
   }
 
-  // Use helper function to format dates
   return (data || []).map(formatEventDates) as Event[]
 }
