@@ -39,19 +39,79 @@ const pastEvents = events.filter(event => event.start_time < today);
       </div>
     </section>
     
-    <section>
-      <ViewListHeader title="Past Events" />
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        {pastEvents.length > 0 ? (
-          pastEvents.map((event, index) => (
+  </div>
+</BaseLayout>
+
+
+<!-- ---
+import BaseLayout from "@/layouts/base.astro";
+import { getEntry } from "astro:content";
+import EventCard from "@/components/cards/eventCard.astro";
+import ViewListHeader from "@/components/shared/view-list-header.astro";
+import { getEvents } from "@/lib/supabase";
+
+// Create a view for events
+const entry = await getEntry("views", "events");
+if (!entry) {
+  return Astro.redirect("/404");
+}
+
+// Fetch all events from Supabase
+const events = await getEvents();
+
+// Separate events into upcoming and past events based on today's date
+const today = new Date().toISOString().split('T')[0];
+const upcomingEvents = events.filter(event => event.start_time >= today);
+const pastEvents = events.filter(event => event.start_time < today);
+---
+
+<style>
+  .hidden-event {
+    display: none;
+  }
+</style>
+
+<BaseLayout entry={entry}>
+  <div class="container py-8">
+    <h1 class="text-3xl font-bold mb-8">Things to do in the Hamptons</h1>
+    
+    Only future events
+    <section class="mb-12">
+      <ViewListHeader title="Upcoming Events" />
+      <div id="upcoming-events-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        {upcomingEvents.map((event, index) => (
+          <div class={`upcoming-event ${index >= 6 ? "hidden-event" : ""}`}>
             <EventCard event={event} index={index} />
-          ))
-        ) : (
-          <p class="col-span-3 text-center py-8 text-base-content/70">
-            No past events to display.
-          </p>
-        )}
+          </div>
+        ))}
       </div>
+      {upcomingEvents.length > 6 ? (
+        <div class="mt-8 text-center">
+          <button id="load-more-upcoming" class="btn bg-white text-black">
+            See More
+          </button>
+        </div>
+      ) : null}
     </section>
   </div>
 </BaseLayout>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const loadMoreBtn = document.getElementById("load-more-upcoming");
+    const container = document.getElementById("upcoming-events-container");
+    const eventsPerBatch = 6;
+  
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener("click", () => {
+        const hiddenEvents = container.querySelectorAll(".upcoming-event.hidden-event");
+        const itemsToShow = Array.from(hiddenEvents).slice(0, eventsPerBatch);
+        itemsToShow.forEach(item => item.classList.remove("hidden-event"));
+  
+        if (container.querySelectorAll(".upcoming-event.hidden-event").length === 0) {
+          loadMoreBtn.style.display = "none";
+        }
+      });
+    }
+  });
+</script>  -->
