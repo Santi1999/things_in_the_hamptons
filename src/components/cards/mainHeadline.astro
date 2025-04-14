@@ -80,7 +80,7 @@ const category = categoriesHandler.oneCategory(article.data.category.id);
 <HeaderSection
   title="Featured Events"
   link_title="View all featured events"
-  link_url="/featured-events/"
+  link_url="categories/featured-events/1/"
 />
 
 <article class="group relative isolate flex flex-col-reverse md:flex-col gap-4">
@@ -110,14 +110,10 @@ const category = categoriesHandler.oneCategory(article.data.category.id);
       <span class="flex items-center gap-1">
         <Calendar04 size="15" />
         <time datetime={article.data.eventDate}>
-          {formatDate(article.data.eventDate, "short")}
+          {formatTimeDifference(article.data.eventDate)}
         </time>
       </span>
 
-      <span class="ml-5 text-secondary">
-        {formatTimeDifference(article.data.eventDate)}
-        {article.data.location && ` | ${article.data.location}`}
-      </span>
 
     </div>
   </div>
