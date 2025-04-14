@@ -46,6 +46,10 @@ export const NAVIGATION_LINKS: Link[] = [
     href: "/categories/health",
     text: "Health",
   },
+  {
+    href: "/contact",
+    text: "Contact Us",
+  },
 ]
 
 export const OTHER_LINKS: Link[] = [
