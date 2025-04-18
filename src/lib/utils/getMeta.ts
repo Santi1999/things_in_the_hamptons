@@ -1,11 +1,11 @@
-import { render, type CollectionEntry } from "astro:content";
-import { authorsHandler } from "../handlers/authors";
-import { SITE } from "../config";
-import defaultImage from "@/assets/images/default-image.jpg";
-import type { ArticleMeta, Meta } from "../types";
-import { capitalizeFirstLetter } from "./letter";
+import { render, type CollectionEntry } from "astro:content"
+import { authorsHandler } from "../handlers/authors"
+import { SITE } from "../config"
+import defaultImage from "@/assets/images/default-image.jpg"
+import type { ArticleMeta, Meta } from "../types"
+import { capitalizeFirstLetter } from "./letter"
 
-type getMeta = CollectionEntry<"articles" | "views">;
+type getMeta = CollectionEntry<"articles" | "views">
 
 export const getMeta = async (
   collection: getMeta,
@@ -13,8 +13,8 @@ export const getMeta = async (
 ): Promise<Meta | ArticleMeta> => {
   try {
     if (collection.collection === "articles") {
-      const { remarkPluginFrontmatter } = await render(collection);
-      const authors = authorsHandler.getAuthors(collection.data.authors);
+      const { remarkPluginFrontmatter } = await render(collection)
+      const authors = authorsHandler.getAuthors(collection.data.authors)
 
       return {
         title: `${capitalizeFirstLetter(collection.data.title)} - ${
@@ -33,7 +33,7 @@ export const getMeta = async (
           link: `${author.id}`,
         })),
         type: "article",
-      };
+      }
     }
 
     if (collection.collection === "views") {
@@ -41,8 +41,8 @@ export const getMeta = async (
         collection.id === "categories" && category
           ? `${capitalizeFirstLetter(category)}  - ${SITE.title}`
           : collection.id === "home"
-          ? SITE.title
-          : `${capitalizeFirstLetter(collection.data.title)} - ${SITE.title}`;
+            ? SITE.title
+            : `${capitalizeFirstLetter(collection.data.title)} - ${SITE.title}`
 
       return {
         title: title,
@@ -51,12 +51,12 @@ export const getMeta = async (
         ogImage: defaultImage.src,
         ogImageAlt: SITE.title,
         type: "website",
-      };
+      }
     }
 
-    throw new Error("Invalid collection");
+    throw new Error("Invalid collection")
   } catch (error) {
-    console.error("Error generating metadata:", error);
-    throw error;
+    console.error("Error generating metadata:", error)
+    throw error
   }
-};
+}
