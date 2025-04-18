@@ -23,17 +23,15 @@ if (!event) {
 
 // Create a temporary entry object for the BaseLayout
 const entry = {
-  collection: "views",
+  collection: "views" as const,
   data: {
     title: event.title,
-    url: event.url,
     description: event.description,
     blocks: [],
-    type: "website"
   },
   id: "event-detail",
-  body: "",
   slug: slug as string,
+  body: "",
   render: async () => ({ Content: () => null, headings: [], remarkPluginFrontmatter: {} }),
 };
 

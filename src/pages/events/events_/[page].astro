@@ -1,0 +1,71 @@
+---
+import BaseLayout from "@/layouts/base.astro";
+import { getEvents } from "@/lib/supabase";
+import { SITE } from "@/lib/config";
+import { getEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const events = await getEvents();
+  const totalPages = Math.ceil(events.length / SITE.postsPerPage);
+  
+  return Array.from({ length: totalPages }, (_, i) => ({
+    params: { page: (i + 1).toString() },
+  }));
+}
+
+const { page } = Astro.params;
+const currentPage = parseInt(page as string);
+const events = await getEvents();
+const totalPages = Math.ceil(events.length / SITE.postsPerPage);
+
+if (currentPage > totalPages) {
+  return Astro.redirect("/404");
+}
+
+const startIndex = (currentPage - 1) * SITE.postsPerPage;
+const endIndex = startIndex + SITE.postsPerPage;
+const paginatedEvents = events.slice(startIndex, endIndex);
+
+const entry = await getEntry("views", "events");
+if (!entry) {
+  return Astro.redirect("/404");
+}
+---
+
+<BaseLayout entry={entry}>
+  <div class="container max-w-5xl py-8">
+    <h1 class="text-3xl md:text-4xl font-bold mb-8">Events</h1>
+    
+    <div class="grid gap-6">
+      {paginatedEvents.map((event) => (
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body">
+            <h2 class="card-title">{event.title}</h2>
+            <p>{event.description}</p>
+            <div class="card-actions justify-end">
+              <a href={`/events/${event.slug}`} class="btn btn-primary">View Details</a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {totalPages > 1 && (
+      <div class="flex justify-center gap-2 mt-8">
+        {currentPage > 1 && (
+          <a href={`/events/events_/${currentPage - 1}`} class="btn btn-outline">
+            Previous
+          </a>
+        )}
+        <span class="btn btn-disabled">
+          Page {currentPage} of {totalPages}
+        </span>
+        {currentPage < totalPages && (
+          <a href={`/events/events_/${currentPage + 1}`} class="btn btn-outline">
+            Next
+          </a>
+        )}
+      </div>
+    )}
+  </div>
+</BaseLayout>
