@@ -21,6 +21,9 @@ export type Event = {
   event_url: string | null
   slug: string
   created_at: string
+  url: string | null
+  category: string | null
+  town: string | null
 }
 
 // Define a generic type for your data
