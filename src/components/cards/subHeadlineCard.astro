@@ -7,6 +7,8 @@ import { getDateDistance } from "@/lib/utils/date";
 import { categoriesHandler } from "@/lib/handlers/categories";
 import HeaderSection from "@/pages/_home/headerSection.astro";
 // /Users/santiagosaldivar/Coding/things_in_the_hamptons/src/pages/_home/headerSection.astro
+import { formatDate, formatTimeDifference } from "@/lib/utils/date";
+
 
 
 type Props = {
@@ -47,7 +49,7 @@ const category = categoriesHandler.oneCategory(article.data.category.id);
       <span class="text-primary dark:text-secondary">{category.data.title}</span
       >
       <Divider />
-      <span>{getDateDistance(remarkPluginFrontmatter.lastModified)}</span>
+      <span>{formatTimeDifference(article.data.eventDate)}</span>
     </div>
   </div>
 
